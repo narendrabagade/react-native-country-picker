@@ -18,8 +18,9 @@ import com.tofugear.countrypicker.R.drawable;
 public class CountryListAdapter extends BaseAdapter {
 
 	private Context context;
-	List<Country> countries;
+	List<ResponseData> countries;
 	LayoutInflater inflater;
+	boolean isImageRequired;
 
 	/**
 	 * The drawable image name has the format "flag_$countryCode". We need to
@@ -48,12 +49,13 @@ public class CountryListAdapter extends BaseAdapter {
 	 * Constructor
 	 *
 	 * @param context
-	 * @param countries
+	 * @param data
 	 */
-	public CountryListAdapter(Context context, List<Country> countries) {
+	public CountryListAdapter(Context context, List<ResponseData> data,boolean isImageRequired) {
 		super();
 		this.context = context;
-		this.countries = countries;
+		this.countries = data;
+		this.isImageRequired = isImageRequired;
 		inflater = (LayoutInflater) this.context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
@@ -83,7 +85,7 @@ public class CountryListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View cellView = convertView;
 		Cell cell;
-		Country country = countries.get(position);
+		ResponseData country = countries.get(position);
 
 		if (convertView == null) {
 			cell = new Cell();
@@ -96,15 +98,17 @@ public class CountryListAdapter extends BaseAdapter {
 		}
 
 		cell.textView.setText(country.getName());
-
-		// Load drawable dynamically from country code
-		String drawableName = "flag_"
-				+ country.getCode().toLowerCase(Locale.ENGLISH);
-		int flagResId = getResId(drawableName);
-		if (flagResId == -1) {
-			flagResId = getResId("globe_icon");  // Fallback
+		 // Load drawable dynamically from country code
+		if(!isImageRequired){
+			cell.imageView.setVisibility(View.GONE);
+		}else if(country.getCode() != null && country.getCode() != ""){
+			String drawableName = "flag_"
+					+ country.getCode().toLowerCase(Locale.ENGLISH);
+			if(getResId(drawableName) != -1){
+				cell.imageView.setImageResource(getResId(drawableName));
+			}
 		}
-		cell.imageView.setImageResource(flagResId);
+
 		return cellView;
 	}
 
