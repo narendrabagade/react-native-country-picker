@@ -20,15 +20,14 @@ import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.UiThreadUtil;
 
 public class CountryPickerModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
-    private Activity mActivity=null;
-    private CountryPicker mostRecentCountryPicker;
+   private CountryPicker mostRecentCountryPicker;
 
     // note that webView.isPaused() is not Xwalk compatible, so tracking it poor-man style
     private boolean isPaused;
 
-    public CountryPickerModule(ReactApplicationContext reactContext, Activity activity) {
+    public CountryPickerModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        mActivity=activity;
+       reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -41,7 +40,10 @@ public class CountryPickerModule extends ReactContextBaseJavaModule implements L
         if (this.isPaused) {
             return;
         }
-
+        final Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return;
+        }
         ReadableArray array = readableMap.getArray("jsonData");
         final CustomeData customeData = new CustomeData();
         if(array !=null){
@@ -63,9 +65,7 @@ public class CountryPickerModule extends ReactContextBaseJavaModule implements L
                           }
                     });
                     mostRecentCountryPicker = picker;
-                    if(mActivity !=null) {
-                        picker.show(mActivity.getFragmentManager(), "COUNTRY_PICKER");
-                    }
+                    picker.show(currentActivity.getFragmentManager(), "COUNTRY_PICKER");
                 }
         });
     }
