@@ -24,7 +24,7 @@ public class CountryPickerPackage implements ReactPackage {
       );
   }
 
-  @Override
+  //NB : RN > 0.42.0 doesnot support
   public List<Class<? extends JavaScriptModule>> createJSModules() {
       return Collections.emptyList();
   }
